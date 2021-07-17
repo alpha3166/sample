@@ -1,0 +1,118 @@
+import React from 'react'
+
+class RandomStringGenerator extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      stringLength: 16,
+      useDigits: true,
+      useCapital: true,
+      useSmall: true,
+      usePunctuations: false,
+      useCustom: false,
+      customChars: 'ABCDEF',
+    }
+    this.handleInputChange = this.handleInputChange.bind(this)
+  }
+  handleInputChange(event) {
+    const target = event.target
+    const value = target.type === 'checkbox' ? target.checked : target.value
+    const name = target.id
+    this.setState({ [name]: value })
+  }
+  render() {
+    // Compute repertoire
+    let repertoire = ''
+    if (this.state.useDigits) {
+      repertoire += '0123456789'
+    }
+    if (this.state.useCapital) {
+      repertoire += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    }
+    if (this.state.useSmall) {
+      repertoire += 'abcdefghijklmnopqrstuvwxyz'
+    }
+    if (this.state.usePunctuations) {
+      repertoire += '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+    }
+    if (this.state.useCustom) {
+      repertoire += this.state.customChars
+    }
+
+    // Validate stringLength
+    let stringLengthError = null
+    let len = 0
+    if (/^\d+$/.test(this.state.stringLength)) {
+      len = Number(this.state.stringLength)
+    }
+    if (len <= 0) {
+      stringLengthError = 'Length must be a positive integer.'
+    }
+
+    /// Validate repertoire
+    let repertoireError = null
+    if (repertoire.length === 0) {
+      repertoireError = 'Select at least one character type.'
+    }
+
+    // Generate if no error
+    if (!stringLengthError && !repertoireError) {
+      const buf = []
+      const len = Number(this.state.stringLength)
+      while (buf.length < len) {
+        const random = Math.floor(Math.random() * repertoire.length)
+        const pickedChar = repertoire[random]
+        buf.push(pickedChar)
+      }
+      this.randomString = buf.join('')
+    }
+
+    return (
+      <div>
+        <div className="h5 my-4 text-center">Random String Generator</div>
+        <form>
+          <div className="form-group row">
+            <label className="col-sm-2 col-form-label" htmlFor="stringLength">Length</label>
+            <div className="col-sm-10">
+              <input className={'form-control' + (stringLengthError ? ' is-invalid' : '')} id="stringLength" type="text" size="5" maxLength="5" value={this.state.stringLength} onChange={this.handleInputChange} />
+              <div className="invalid-feedback">{stringLengthError}</div>
+            </div>
+          </div>
+          <fieldset className="form-group">
+            <div className="row">
+              <legend className="col-form-label col-sm-2">Use</legend>
+              <div className="col-sm-10">
+                <div className="form-check">
+                  <input className={'form-check-input' + (repertoireError ? ' is-invalid' : '')} id="useDigits" type="checkbox" checked={this.state.useDigits} onChange={this.handleInputChange} />
+                  <label className="form-check-label" htmlFor="useDigits">Digits</label>
+                </div>
+                <div className="form-check">
+                  <input className={'form-check-input' + (repertoireError ? ' is-invalid' : '')} id="useCapital" type="checkbox" checked={this.state.useCapital} onChange={this.handleInputChange} />
+                  <label className="form-check-label" htmlFor="useCapital">Capital Latin</label>
+                </div>
+                <div className="form-check">
+                  <input className={'form-check-input' + (repertoireError ? ' is-invalid' : '')} id="useSmall" type="checkbox" checked={this.state.useSmall} onChange={this.handleInputChange} />
+                  <label className="form-check-label" htmlFor="useSmall">Small Latin</label>
+                </div>
+                <div className="form-check">
+                  <input className={'form-check-input' + (repertoireError ? ' is-invalid' : '')} id="usePunctuations" type="checkbox" checked={this.state.usePunctuations} onChange={this.handleInputChange} />
+                  <label className="form-check-label" htmlFor="usePunctuations">Punctuations</label>
+                </div>
+                <div className="form-check">
+                  <input className={'form-check-input' + (repertoireError ? ' is-invalid' : '')} id="useCustom" type="checkbox" checked={this.state.useCustom} onChange={this.handleInputChange} />
+                  <label className="form-check-label" htmlFor="useCustom">Custom</label>
+                  <input className={'form-control' + (repertoireError ? ' is-invalid' : '')} id="customChars" type="text" value={this.state.customChars} onChange={this.handleInputChange} />
+                  <div className="invalid-feedback">{repertoireError}</div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <button className="btn btn-primary mb-3" type="button" onClick={() => this.forceUpdate()}>Generate</button>
+        </form>
+        <div className="h1 text-monospace text-break">{this.randomString}</div>
+      </div >
+    )
+  }
+}
+
+export default RandomStringGenerator
