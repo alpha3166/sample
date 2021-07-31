@@ -1,0 +1,11 @@
+version: '3'
+services:
+  ws:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sample-dev
+    user: 1000:1000
+    volumes:
+      - ../..:/sample
+    working_dir: /sample
