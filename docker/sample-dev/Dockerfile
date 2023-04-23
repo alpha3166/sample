@@ -1,8 +1,7 @@
 FROM alpine
 RUN addgroup -g 1000 me && \
-    adduser -u 1000 -G me -D me && \
-    addgroup me wheel
+    adduser -u 1000 -G me -D me
 RUN apk -U add sudo && \
-    echo "%wheel ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/wheel
+    echo "me ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/me
 RUN apk -U add git less
 RUN apk -U add npm
